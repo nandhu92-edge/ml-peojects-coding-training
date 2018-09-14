@@ -18,47 +18,34 @@ plt.xkcd();
 random_state = 42
 np.random.seed(random_state)
 tf.set_random_seed(random_state)
-#name_cols = ["school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","guardian","traveltime","studytime","failures","schoolsup","famsup","paid","activities","nursery","higher","internet","romantic","famrel","freetime","goout","Dalc","Walc","health","absences","G1","G2","G3"]
-#index_given = ["school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"]
 math_df = pd.read_csv(r"E:\Machine Learning\Machine Learning Projects Nirantk\Databases\neural networks\student-mat.csv")# index_col = index_given)
 port_df = pd.read_csv(r"E:\Machine Learning\Machine Learning Projects Nirantk\Databases\neural networks\student-por.csv") #index_col = index_given)
-#print(math_df.head())
 
 math_df["course"] = "math"
 port_df["course"] = "portuguese"
 
 merged_df = math_df.append(port_df)
 merged_df.shape
-#print(merged_df)
 merge_vector = ["school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"]
 duplicated_mask = merged_df.duplicated(keep=False, subset = merge_vector)
 duplicated_df = merged_df[duplicated_mask]
-#print(duplicated_df)
 unique_df = merged_df[~duplicated_mask] 
-#print(unique_df)
 both_courses_mask = duplicated_df.duplicated(subset=merge_vector)
-#print(both_courses_mask)
 both_courses_df = duplicated_df[~both_courses_mask].copy()
-#print(both_courses_df)
 both_courses_df["course"] = "both"
-#print(both_courses_df)
 students_df = unique_df.append(both_courses_df)
 students_df = students_df.sample(frac=1)
-#print(students_df)
 students_df['alcohol'] = (students_df.Walc * 2 + students_df.Dalc * 5) / 7
-#print(students_df['alcohol'])
 students_df['alcohol'] = students_df.alcohol.map(lambda x: ceil(x))
-#print(students_df['alcohol'])
 students_df['drinker'] = students_df.alcohol.map(lambda x: "yes" if x > 2 else "no")
-#print(students_df['drinker'])
 
-#students_df.course.value_counts().plot(kind="bar", rot=0);
-#students_df.alcohol.value_counts().plot(kind="bar", rot=0);
-#students_df.drinker.value_counts().plot(kind="bar", rot=0);
-#sns.pairplot(students_df[['age', 'absences', 'G3', 'goout', 'freetime', 'studytime', 'drinker']], hue='drinker');
+students_df.course.value_counts().plot(kind="bar", rot=0);
+students_df.alcohol.value_counts().plot(kind="bar", rot=0);
+students_df.drinker.value_counts().plot(kind="bar", rot=0);
+sns.pairplot(students_df[['age', 'absences', 'G3', 'goout', 'freetime', 'studytime', 'drinker']], hue='drinker');
 corr_mat = students_df.corr() 
-#fig, ax = plt.subplots(figsize=(20, 12)) 
-#sns.heatmap(corr_mat, vmax=1.0, square=True, ax=ax);
+fig, ax = plt.subplots(figsize=(20, 12)) 
+sns.heatmap(corr_mat, vmax=1.0, square=True, ax=ax);
 
 def encode(series): 
   return pd.get_dummies(series.astype(str))
@@ -80,8 +67,6 @@ train_x = pd.concat([train_x, encode(students_df.sex), encode(students_df.Pstatu
                     ], axis=1)
 
 train_y = encode(students_df.drinker)
-#print(train_x)
-#print(train_x.iloc[0].values)
 
 train_size = 0.9
 
